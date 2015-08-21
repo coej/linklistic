@@ -78,7 +78,8 @@ def catch_all(submitted_text):
                                             by=params['by'],
                                             message=params['message'],
                                             title=params['title'],
-                                            brand_message = params['brand_message'])
+                                            brand_message = params['brand_message'],
+                                            full_query = submitted_text)
 
 if __name__ == '__main__':
     import os
