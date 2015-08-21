@@ -25,7 +25,7 @@
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <a class="navbar-brand" href="static/#">Linklistic</a>
+      <a class="navbar-brand" href="{{ url_for('static', filename='index.html') }}">Linklistic</a>
       <ul class="nav nav-pills">
         <!--
         <li class="nav-item active">
@@ -33,21 +33,23 @@
         </li>
         -->
         <li class="nav-item">
-          <a class="nav-link" href="static/#">About</a>
+          <a class="nav-link" href="{{ url_for('static', filename='about.html') }}">About</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="static/#">Usage</a>
+          <a class="nav-link" href="{{ url_for('static', filename='usage.html') }}">Usage</a>
         </li>
       </ul>
     </nav>
 
     <div class="container">
 
+      <!-- big title area, probably won't use -->      
+      <!--
       <div class="starter-template">
         <h1>Bootstrap starter template</h1>
         <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-
-      </div><!-- /.starter-template -->
+      </div>
+      -->
 
       <h3>Two columns</h3>
       <p>Get two columns <strong>starting at desktops and scaling to large desktops</strong>.</p>
