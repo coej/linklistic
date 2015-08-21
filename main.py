@@ -1,7 +1,12 @@
 
-
+from __future__ import print_function
 from flask import Flask, request, render_template
 
+default_params = {'by': None,
+                  'message': None,
+                  'title': None,
+                  'title_size': 'big',
+                  'brand_message': "Turn many links into one link right from your browser's address bar."}
 
 app = Flask(__name__)
 
@@ -10,7 +15,7 @@ class Link:
         if title: 
             self.title = title
         else:
-            self.title = path            
+            self.title = path
         if '://' not in path[:10]:
             path = 'http://%s' % path
         self.href = path
@@ -39,9 +44,7 @@ def catch_all(submitted_text):
 
     else:
         links = []
-        params = {'from': None,
-                  'message': "Broken links? It's not our fault.",
-                  'title': "Your links are listed below."}
+        params = default_params.copy()
 
         # users must use two semicolons for each semicolon that's in an actual URL to be linked
         strings = submitted_text.replace(';;', 'ESCAPED_SEMICOLON_STANDIN')  
@@ -58,6 +61,7 @@ def catch_all(submitted_text):
                 key = check_commands[0]
                 value = check_commands[1]
                 params[key] = value
+                continue
 
             s = s.replace('ESCAPED_SEMICOLON_STANDIN', ';')
 
@@ -69,11 +73,14 @@ def catch_all(submitted_text):
             links.append(lnk)
 
         # send Link list to jinja template
+
         return render_template('main.html', links=links, 
-                                            list_from=params['from'],
+                                            by=params['by'],
                                             message=params['message'],
-                                            title=params['title'])
+                                            title=params['title'],
+                                            brand_message = params['brand_message'])
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8888, debug=True)
-
+    import os
+    port = int(os.environ.get("PORT", 80))
+    app.run(host='0.0.0.0', port=port, debug=True)

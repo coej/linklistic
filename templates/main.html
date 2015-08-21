@@ -54,7 +54,11 @@
       {% if title %}
         <h3>{{ title }}</h3>
       {% else %}
-        <!-- no title field used -->
+        <h3></h3>
+      {% endif %}
+
+      {% if by %}
+        <h4>from <strong>{{ by }}</strong></h3>
       {% endif %}
 
       {% if message %}
@@ -96,7 +100,9 @@
         </table>
       </div>
 
-
+    <div>
+      <p><small>{{ brand_message }}</small></p>
+    </div>
     </div><!-- /.container -->
 
 
