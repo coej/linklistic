@@ -6,11 +6,15 @@ from flask import Flask, request, render_template
 app = Flask(__name__)
 
 class Link:
-    def __init__(self, path, title):
+    def __init__(self, path, title=None, note=None):
+        if title: 
+            self.title = title
+        else:
+            self.title = path            
         if '://' not in path[:10]:
             path = 'http://%s' % path
         self.href = path
-        self.title = title
+        self.note = ''
 
 # Consider:
 # - we can include a self-referential link (localhost:8888/anotherlink.com)
@@ -36,7 +40,7 @@ def catch_all(submitted_text):
     else:
         links = []
         params = {'from': None,
-                  'message': None,
+                  'message': "Broken links? It's not our fault.",
                   'title': "Your links are listed below."}
 
         # users must use two semicolons for each semicolon that's in an actual URL to be linked

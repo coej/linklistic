@@ -51,26 +51,51 @@
       </div>
       -->
 
-      <h3>Two columns</h3>
-      <p>Get two columns <strong>starting at desktops and scaling to large desktops</strong>.</p>
+      {% if title %}
+        <h3>{{ title }}</h3>
+      {% else %}
+        <!-- no title field used -->
+      {% endif %}
 
+      {% if message %}
+        <p><small>{{ message }}</small></p>
+      {% endif %}
+
+      <!--
       <div class='link-list'>
-
         {% for link in links %}
         <div class="row">
           <div class="col-md-8">
             <a href="{{ link.href }}">{{ link.title }}</a>
-
           </div>
-          <div class="col-md-4">
-
-            preview of content?
-
-          </div>
-        </div><!-- /.row -->
+        </div>
         {% endfor %}
+      </div>
+      -->
 
-      </div><!-- /.link-list -->
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <!-- <th>#</th> -->
+              <th>Link</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          {% for link in links %}         
+            <tr>
+              <!-- <td>{{loop.index}}</td> -->
+              <td><a href="{{ link.href }}">{{ link.title }}</a></td>
+              <td>{{ link.note }}</td>
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+
 
     </div><!-- /.container -->
 
