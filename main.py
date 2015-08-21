@@ -2,6 +2,22 @@
 from __future__ import print_function
 from flask import Flask, request, render_template
 
+# heroku postgres boilerplate
+import os
+import psycopg2
+import urlparse
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+conn = psycopg2.connect(
+    database=url.path[1:],
+    user=url.username,
+    password=url.password,
+    host=url.hostname,
+    port=url.port
+)
+debug_output = str(conn)
+
+
 default_params = {'by': None,
                   'message': None,
                   'title': None,
@@ -79,7 +95,7 @@ def catch_all(submitted_text):
                                             message=params['message'],
                                             title=params['title'],
                                             brand_message = params['brand_message'],
-                                            full_query = submitted_text)
+                                            full_query = submitted_text)             + debug_output
 
 if __name__ == '__main__':
     import os
