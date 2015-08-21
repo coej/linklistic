@@ -51,6 +51,10 @@ class Link:
 # - So: if the format is set up the right way it could be possible to encode 
 #   an entire choose-your-own-adventure game into one big URL string...?
 
+@app.route('/database')
+def database():
+    return 'testing'
+
 # "Catch-all URL": http://flask.pocoo.org/snippets/57/
 @app.route('/', defaults={'submitted_text': ''})
 @app.route('/<path:submitted_text>')
