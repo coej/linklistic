@@ -56,10 +56,10 @@ def catch_all(submitted_text):
             # functionality for adding commands into the 
             # link list string ("listname:My Bookmarks;http://...")
             
-            check_commands = s.split('=', maxsplit=1)
-            if len(check_commands)==2:
+            check_commands = s.split('=')  #, maxsplit=1) py 3 only
+            if len(check_commands)>=2:
                 key = check_commands[0]
-                value = check_commands[1]
+                value = '='.join(check_commands[1:])
                 params[key] = value
                 continue
 
