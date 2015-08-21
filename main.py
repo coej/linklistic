@@ -70,14 +70,14 @@ class Link:
 @app.route('/database')
 def database():
     pass
-    #import psycopg2
-    #import psycopg2.extensions
-    #psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-    #psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
-    #import os
-    #import urlparse
-    #urlparse.uses_netloc.append("postgres")
-    #url = urlparse.urlparse(os.environ["DATABASE_URL"])
+    import psycopg2
+    import psycopg2.extensions
+    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+    psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+    import os
+    import urlparse
+    urlparse.uses_netloc.append("postgres")
+    url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
     #conn = psycopg2.connect(
     #    database=url.path[1:],
