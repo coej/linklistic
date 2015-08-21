@@ -45,7 +45,7 @@ class Link:
             self.title = title
         else:
             self.title = 'no title'
-        if not Note:
+        if not note:
             self.note = 'no note'
 
     def write(connection):
