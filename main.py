@@ -3,7 +3,7 @@ from __future__ import print_function
 from flask import Flask, request, render_template
 
 # rendered below closing HTML tag!
-debug_output = []
+debugtxt = []
 
 # heroku postgres boilerplate
 # the environment variable DATABASE_URL has to be set manually on Heroku 
@@ -22,7 +22,7 @@ conn = psycopg2.connect(
     host=url.hostname,
     port=url.port
 )
-debug.append(str(conn))
+debugtxt.append(str(conn))
 
 
 
@@ -30,7 +30,7 @@ default_params = {'by': None,
                   'message': None,
                   'title': None,
                   'title_size': 'big',
-                  'brand_message': "Turn many links into one link right from your browser's address bar."}
+                  'brand_message': "Turn many links into one link right from your address bar."}
 
 app = Flask(__name__)
 
@@ -103,7 +103,7 @@ def catch_all(submitted_text):
                                         title=params['title'],
                                         brand_message = params['brand_message'],
                                         full_query = submitted_text
-                            ) + '\n\n' + '\n\n'.join(debug_output)
+                            ) + '\n\n' + '\n\n'.join(debugtxt)
 
 if __name__ == '__main__':
     import os
