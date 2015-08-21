@@ -5,13 +5,21 @@ from flask import Flask, request, render_template
 # rendered below closing HTML tag!
 debugtxt = []
 
+
+
+# "In Python 2, if you want to uniformly receive all your database input in 
+# Unicode, you can register the related typecasters globally as soon as Psycopg is imported:"
+import psycopg2
+import psycopg2.extensions
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+
 # heroku postgres boilerplate
 # the environment variable DATABASE_URL has to be set manually on Heroku 
 # (e.g., on the app settings page)
 # set with: 
 # confirm with: heroku config:get DATABASE_URL --app linklistic
 import os
-import psycopg2
 import urlparse
 urlparse.uses_netloc.append("postgres")
 url = urlparse.urlparse(os.environ["DATABASE_URL"])
@@ -35,15 +43,25 @@ default_params = {'by': None,
 app = Flask(__name__)
 
 class Link:
-    def __init__(self, path, title=None, note=None):
+    def __init__(self, path, title=None, note=None, thumbnail=None):
+
+        def assume_protocol(path):
+            if '://' not in path[:10]:
+                path = 'http://%s' % path
+            return path
+        self.href = assume_protocol(path)
+
         if title: 
             self.title = title
         else:
-            self.title = path
-        if '://' not in path[:10]:
-            path = 'http://%s' % path
-        self.href = path
-        self.note = ''
+            self.title = 'no title'
+        if not Note:
+            self.note = 'no note'
+
+    def write(connection):
+        pass
+
+
 
 # Consider:
 # - we can include a self-referential link (localhost:8888/anotherlink.com)
@@ -51,9 +69,24 @@ class Link:
 # - So: if the format is set up the right way it could be possible to encode 
 #   an entire choose-your-own-adventure game into one big URL string...?
 
+
+
+## binary insertion (bytea type):
+# mypic = open('picture.png', 'rb').read()
+# curs.execute("insert into blobs (file) values (%s)", (psycopg2.Binary(mypic),))
+
+
+
 @app.route('/database')
 def database():
-    return 'testing'
+
+    SQL1 = "SELECT * FROM Link"
+    with conn:
+        with conn.cursor() as curs:
+            curs.execute(SQL1)
+    cur.execute()
+    records = [r for r in cur]
+    return str(records)
 
 # "Catch-all URL": http://flask.pocoo.org/snippets/57/
 @app.route('/', defaults={'submitted_text': ''})
