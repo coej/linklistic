@@ -50,7 +50,7 @@ class Link:
             user=url.username,
             password=url.password,
             host=url.hostname,
-            port=url.port
+            port=url.port)
 
         def assume_protocol(path):
             if '://' not in path[:10]:
