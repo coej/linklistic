@@ -3,16 +3,11 @@ from __future__ import print_function
 from flask import Flask, request, render_template
 
 # rendered below closing HTML tag!
-debugtxt = []
 
 
 
 # "In Python 2, if you want to uniformly receive all your database input in 
 # Unicode, you can register the related typecasters globally as soon as Psycopg is imported:"
-import psycopg2
-import psycopg2.extensions
-psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 
 # heroku postgres boilerplate
 # the environment variable DATABASE_URL has to be set manually on Heroku 
@@ -74,25 +69,28 @@ class Link:
 
 @app.route('/database')
 def database():
+    pass
+    #import psycopg2
+    #import psycopg2.extensions
+    #psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+    #psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+    #import os
+    #import urlparse
+    #urlparse.uses_netloc.append("postgres")
+    #url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
-    import os
-    import urlparse
-    urlparse.uses_netloc.append("postgres")
-    url = urlparse.urlparse(os.environ["DATABASE_URL"])
-    
-    conn = psycopg2.connect(
-        database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port)
-    debugtxt.append(str(conn))
-    SQL1 = "SELECT * FROM Link"
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute(SQL1)
-    records = [r for r in cur]
-    return str(records)
+    #conn = psycopg2.connect(
+    #    database=url.path[1:],
+    #    user=url.username,
+    #    password=url.password,
+    #    host=url.hostname,
+    #    port=url.port)
+    #SQL1 = "SELECT * FROM Link"
+    #with conn:
+    #    with conn.cursor() as cursor:
+    #        cursor.execute(SQL1)
+    #records = [r for r in cur]
+    #return str(records)
 
 # "Catch-all URL": http://flask.pocoo.org/snippets/57/
 @app.route('/', defaults={'submitted_text': ''})
@@ -145,8 +143,7 @@ def catch_all(submitted_text):
                                         message=params['message'],
                                         title=params['title'],
                                         brand_message = params['brand_message'],
-                                        full_query = submitted_text
-                            ) + '\n\n' + '\n\n'.join(debugtxt)
+                                        full_query = submitted_text)
 
 if __name__ == '__main__':
     import os
