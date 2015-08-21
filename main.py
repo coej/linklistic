@@ -3,6 +3,8 @@ from __future__ import print_function
 from flask import Flask, request, render_template
 
 # heroku postgres boilerplate
+# the environment variable DATABASE_URL has to be set manually on Heroku 
+# (e.g., on the app settings page)
 import os
 import psycopg2
 import urlparse
