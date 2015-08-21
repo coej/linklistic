@@ -65,32 +65,31 @@ class Link:
 # mypic = open('picture.png', 'rb').read()
 # curs.execute("insert into blobs (file) values (%s)", (psycopg2.Binary(mypic),))
 
+import psycopg2
+import psycopg2.extensions
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+import os
+import urlparse
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+conn = psycopg2.connect(
+    database=url.path[1:],
+    user=url.username,
+    password=url.password,
+    host=url.hostname,
+    port=url.port)
 
 
 @app.route('/database')
 def database():
-    pass
-    import psycopg2
-    import psycopg2.extensions
-    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-    psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
-    import os
-    import urlparse
-    urlparse.uses_netloc.append("postgres")
-    url = urlparse.urlparse(os.environ["DATABASE_URL"])
-
-    #conn = psycopg2.connect(
-    #    database=url.path[1:],
-    #    user=url.username,
-    #    password=url.password,
-    #    host=url.hostname,
-    #    port=url.port)
-    #SQL1 = "SELECT * FROM Link"
-    #with conn:
-    #    with conn.cursor() as cursor:
-    #        cursor.execute(SQL1)
-    #records = [r for r in cur]
-    #return str(records)
+    SQL1 = "SELECT * FROM Link"
+    with conn:
+        with conn.cursor() as cursor:
+            cursor.execute(SQL1)
+            records = [r for r in cursor]
+    return str(records)
 
 # "Catch-all URL": http://flask.pocoo.org/snippets/57/
 @app.route('/', defaults={'submitted_text': ''})
