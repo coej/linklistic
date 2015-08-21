@@ -89,9 +89,8 @@ def database():
 
     SQL1 = "SELECT * FROM Link"
     with conn:
-        with conn.cursor() as curs:
-            curs.execute(SQL1)
-    cur.execute()
+        with conn.cursor() as cursor:
+            cursor.execute(SQL1)
     records = [r for r in cur]
     return str(records)
 
