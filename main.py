@@ -19,10 +19,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 # (e.g., on the app settings page)
 # set with: 
 # confirm with: heroku config:get DATABASE_URL --app linklistic
-import os
-import urlparse
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
 #conn = psycopg2.connect(
 #    database=url.path[1:],
 #    user=url.username,
@@ -30,8 +27,6 @@ url = urlparse.urlparse(os.environ["DATABASE_URL"])
 #    host=url.hostname,
 #    port=url.port
 #)
-debugtxt.append(str(conn))
-
 
 
 default_params = {'by': None,
@@ -44,13 +39,6 @@ app = Flask(__name__)
 
 class Link:
     def __init__(self, path, title=None, note=None, thumbnail=None):
-
-        conn = psycopg2.connect(
-            database=url.path[1:],
-            user=url.username,
-            password=url.password,
-            host=url.hostname,
-            port=url.port)
 
         def assume_protocol(path):
             if '://' not in path[:10]:
@@ -87,6 +75,18 @@ class Link:
 @app.route('/database')
 def database():
 
+    import os
+    import urlparse
+    urlparse.uses_netloc.append("postgres")
+    url = urlparse.urlparse(os.environ["DATABASE_URL"])
+    
+    conn = psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port)
+    debugtxt.append(str(conn))
     SQL1 = "SELECT * FROM Link"
     with conn:
         with conn.cursor() as cursor:
