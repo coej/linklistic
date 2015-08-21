@@ -23,13 +23,13 @@ import os
 import urlparse
 urlparse.uses_netloc.append("postgres")
 url = urlparse.urlparse(os.environ["DATABASE_URL"])
-conn = psycopg2.connect(
-    database=url.path[1:],
-    user=url.username,
-    password=url.password,
-    host=url.hostname,
-    port=url.port
-)
+#conn = psycopg2.connect(
+#    database=url.path[1:],
+#    user=url.username,
+#    password=url.password,
+#    host=url.hostname,
+#    port=url.port
+#)
 debugtxt.append(str(conn))
 
 
@@ -44,6 +44,13 @@ app = Flask(__name__)
 
 class Link:
     def __init__(self, path, title=None, note=None, thumbnail=None):
+
+        conn = psycopg2.connect(
+            database=url.path[1:],
+            user=url.username,
+            password=url.password,
+            host=url.hostname,
+            port=url.port
 
         def assume_protocol(path):
             if '://' not in path[:10]:
