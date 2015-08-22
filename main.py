@@ -1,6 +1,6 @@
 
 from __future__ import print_function
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 
 from tasks import *
 
@@ -77,10 +77,22 @@ conn = psycopg2.connect(
     port=url.port)
 
 
+
+@app.route('/ajax')
+def ajax_test():
+    return render_template('ajax_demo.html')
+@app.route('/_add_numbers')
+def add_numbers():
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    return jsonify(result = a + b)
+
+
+
+
 @app.route('/')
 def site_root():
     return "Front page here"
-
 
 @app.route('/celery')
 def celery_test():
@@ -88,10 +100,8 @@ def celery_test():
     result = adder_func.delay(3, 4)
     return str(result.status)
 
-
 @app.route('/database')
 def database():
-
     # SQL_lists = etc. (get title/message/note/etc. information)
     params = default_params.copy() # placeholder values
     submitted_text = '' #placeholder
@@ -113,6 +123,9 @@ def database():
                                         brand_message = params['brand_message'],
                                         full_query = submitted_text)
     return str(records)
+
+
+
 
 # "Catch-all URL": http://flask.pocoo.org/snippets/57/
 @app.route('/<path:submitted_text>')
