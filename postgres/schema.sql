@@ -9,10 +9,8 @@ CREATE TABLE Link
 );
 
 
-INSERT INTO Link VALUES 
-    (1,
+INSERT INTO Link (href, title, note) 
+    VALUES ('http://www.ysib.com', 'YSIB Homepage', 'ysib rox');
 
-        )
-
-
-INSERT INTO Link (linkproduct_no, name, price) VALUES (1, 'Cheese', 9.99);
+INSERT INTO Link (href, title, note) 
+    VALUES ('http://www.amazon.com', 'Amazon', 'get back to work');

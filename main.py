@@ -4,8 +4,6 @@ from flask import Flask, request, render_template
 
 # rendered below closing HTML tag!
 
-
-
 # "In Python 2, if you want to uniformly receive all your database input in 
 # Unicode, you can register the related typecasters globally as soon as Psycopg is imported:"
 
@@ -47,17 +45,6 @@ class Link:
     def write(connection):
         pass
 
-
-
-from celery import Celery
-import os
-celery_app = Celery('tasks', broker='amqp://guest@localhost//')
-celery_app.conf.update(BROKER_URL = "amqp://0lVWqEiZ:iN64VNG3QZm6lOHLlI7OJpCgDPwaFXbM@black-hazel-49.bigwig.lshift.net:10854/CvkUc-lrHImb")
-@celery_app.task
-def add(x, y):
-    return x + y
-
-
 # Consider:
 # - we can include a self-referential link (localhost:8888/anotherlink.com)
 # - we can title the links (maybe)?
@@ -88,16 +75,16 @@ conn = psycopg2.connect(
     port=url.port)
 
 
-
 @app.route('/')
 def site_root():
     return "Front page here"
 
 
-@app.route('/adder')
-def adder():
+@app.route('/celery')
+def celery_test():
     from tasks import adder_func
-    return adder_func(3, 4)
+    result = adder_func.delay(3, 4)
+    return str(result.status)
 
 
 @app.route('/database')
@@ -158,14 +145,12 @@ def catch_all(submitted_text):
 
         s = s.replace('ESCAPED_SEMICOLON_STANDIN', ';')
 
-        title = s
-        if len(title) > 77:
-            title = title[:77] + '...'
+        #title = s
+        #if len(title) > 77:
+        #    title = title[:77] + '...'
 
-        link = Link(path=s, title=title)
+        link = Link(path=s)
         links.append(link)
-
-    # send Link list to jinja template
 
     return render_template('main.html', links=links, 
                                         by=params['by'],

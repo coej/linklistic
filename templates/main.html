@@ -91,7 +91,11 @@
           {% for link in links %}         
             <tr>
               <!-- <td>{{loop.index}}</td> -->
-              <td><a href="{{ link.href }}">{{ link.title }}</a></td>
+              {% if link.title %}
+                <td><a href="{{ link.href }}">{{ link.title }}</a></td>
+              {% else %}
+                <td><a href="{{ link.href }}">{{ link.href }}</a></td>
+              {% endif %}
               <td>{{ link.note }}</td>
             </tr>
           {% endfor %}
@@ -100,6 +104,11 @@
         </table>
       </div>
 
+<style>
+p {
+    letter-spacing: 2px;
+}
+</style>
     <div>
       <p><small>{{ brand_message }}</small></p>
       <p><small>
