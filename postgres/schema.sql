@@ -9,8 +9,16 @@ CREATE TABLE Link
 );
 
 
-INSERT INTO Link (href, title, note) 
-    VALUES ('http://www.ysib.com', 'YSIB Homepage', 'ysib rox');
+# INSERT INTO Link (href, title, note) 
+#    VALUES ('http://www.ysib.com', 'YSIB Homepage', 'ysib rox');
+#
+# INSERT INTO Link (href, title, note) 
+#    VALUES ('http://www.amazon.com', 'Amazon', 'get back to work');
 
-INSERT INTO Link (href, title, note) 
-    VALUES ('http://www.amazon.com', 'Amazon', 'get back to work');
+#INSERT INTO Link (href, title, note) 
+#SELECT LOWER('http://www.AVClub.com'), 'The A.V. Club', 'w00t'
+#WHERE NOT EXISTS (
+#    select * from Link where LOWER(href) = LOWER('http://www.avclub.com')
+#);
+#
+#select * from link;

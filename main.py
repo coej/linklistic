@@ -2,6 +2,8 @@
 from __future__ import print_function
 from flask import Flask, request, render_template
 
+from tasks import *
+
 # rendered below closing HTML tag!
 
 # "In Python 2, if you want to uniformly receive all your database input in 
@@ -82,7 +84,7 @@ def site_root():
 
 @app.route('/celery')
 def celery_test():
-    from tasks import adder_func
+    #from tasks import adder_func
     result = adder_func.delay(3, 4)
     return str(result.status)
 
@@ -151,6 +153,9 @@ def catch_all(submitted_text):
 
         link = Link(path=s)
         links.append(link)
+
+    for link in links:
+        commit_raw_link.delay(link.href)
 
     return render_template('main.html', links=links, 
                                         by=params['by'],

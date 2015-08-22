@@ -14,7 +14,6 @@ CELERY_RESULT_BACKEND = 'amqp'
 CELERYD_STATE_DB = "c:/db/celery/celery_worker_state" 
 celery_app = Celery('tasks', backend=CELERY_RESULT_BACKEND, broker=BROKER_URL)
 
-# do we put this here??
 import psycopg2
 import psycopg2.extensions
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -43,7 +42,6 @@ def adder_func(x, y):
 @celery_app.task
 def commit_raw_link(href):
     import psycopg2
-
     SQL = '''
         INSERT INTO Link (href, title, note) 
         SELECT LOWER(%s), %s, %s
@@ -51,8 +49,9 @@ def commit_raw_link(href):
             select * from Link where LOWER(href) = LOWER(%s)
         );
     '''
-    format_items = (href, None, None, href)
+    title = get_best_title(href)
 
+    format_items = (href, title, None, href)
     print (SQL % format_items)
 
     with conn.cursor() as cur:
@@ -65,23 +64,43 @@ def commit_raw_link(href):
         conn.commit()
     
 
+def get_best_title(href):
+    if 'facebook.com/' in href[:25]:
+        title = get_facebook_title(href)
+        if not title:
+            title = "Facebook.com"
+    else:
+        title = get_webpage_title(href)
+        if not title:
+            title = "*%s" % href
+    return title.strip()
 
-@celery_app.task
-def save_page_title(href):
-    import requests
-    from bs4 import BeautifulSoup
-    import psycopg2
-    cur = conn.cursor()
-    cur.execute('select * from Link')
-    conn.commit()
-
-
-@celery_app.task
-def read_me(href):
-    cur = conn.cursor(cursor_factory=DictCursor)
-    cur.execute('select * from Link')
-    try: 
-        x = cur.fetchone()
-        print(str(x))
+        
+def get_webpage_title(href):
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+        doc = requests.get(href)
+        soup = BeautifulSoup(doc.text)
+        title = soup.html.head.title
+        return title.string
     except:
-        print("couldn't fetchone()")
+        print("couldn't fetch title: %s" % href)
+        return None
+
+
+def get_facebook_title(href):
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+        doc = requests.get(href)
+        soup = BeautifulSoup(doc.text)
+        title = soup.html.head.title
+        data = soup.findAll('h2',attrs={'class':'uiHeaderTitle'});
+        for a in data:
+            return a.string
+        else:
+            return title.string
+        return None
+    except:
+        return None
