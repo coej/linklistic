@@ -103,13 +103,41 @@ p {
     </div>
     </div><!-- /.container -->
 
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='js/jquery.min.js') }}"><\/script>')</script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
+    <script type=text/javascript>
+      $(function() {
+        $('#jq_run').bind('click', function() {
+
+
+          link = $('a[name="linkrow_0"]') 
+          
+          jres = $.get($SCRIPT_ROOT + '/some_text_output/' + 'lkjlkj')
+          // $('a[name="linkrow_0"]').text()12341234', {
+          // {
+          //  {% for link in links %}
+          //    a: $('a[name="linkrow_0"]').text(),
+          //  {% endfor %}
+          //}, 
+          //function(data) {
+          //  link.text(data.result);
+          //});
+          link.text('fffff')
+          alert(jres.responseText)
+          return false;
+        });
+      });
+    </script>
+    <p><a href="#" id="jq_run">run jquery function</a>
 
   </body>
 </html>

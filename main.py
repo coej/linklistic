@@ -87,7 +87,14 @@ def add_numbers():
     b = request.args.get('b', 0, type=int)
     return jsonify(result = a + b)
 
+@app.route('/some_json_output/<path:query>')
+def some_json_output(query):
+    return jsonify(links = {'shiz.com': 'Shiz Magazine',
+                            'biz.com': 'Business Lyfe'})
 
+@app.route('/some_text_output/<path:query>')
+def some_text_output(query):
+    return query
 
 
 @app.route('/')
@@ -147,6 +154,7 @@ def catch_all(submitted_text):
 
     strings = strings.split(';')
     for s in strings:
+        if s=='': continue #training semicolon
 
         # functionality for adding commands into the 
         # link list string ("listname:My Bookmarks;http://...")
