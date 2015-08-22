@@ -116,7 +116,7 @@ def database():
     for link in links:
         print(link.href, link.note)
 
-    return render_template('main.html', links=links, 
+    return render_template('main.html', links=[str(tup) for tup in enumerate(links)],
                                         by=params['by'],
                                         message=params['message'],
                                         title=params['title'],
@@ -170,12 +170,14 @@ def catch_all(submitted_text):
     for link in links:
         commit_raw_link.delay(link.href)
 
-    return render_template('main.html', links=links, 
+
+    return render_template('main.html', links=links,
                                         by=params['by'],
                                         message=params['message'],
                                         title=params['title'],
                                         brand_message = params['brand_message'],
                                         full_query = submitted_text)
+
 
 if __name__ == '__main__':
     import os

@@ -65,18 +65,6 @@
         <p><small>{{ message }}</small></p>
       {% endif %}
 
-      <!--
-      <div class='link-list'>
-        {% for link in links %}
-        <div class="row">
-          <div class="col-md-8">
-            <a href="{{ link.href }}">{{ link.title }}</a>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      -->
-
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
@@ -91,11 +79,7 @@
           {% for link in links %}         
             <tr>
               <!-- <td>{{loop.index}}</td> -->
-              {% if link.title %}
-                <td><a href="{{ link.href }}">{{ link.title }}</a></td>
-              {% else %}
-                <td><a href="{{ link.href }}">{{ link.href }}</a></td>
-              {% endif %}
+              <td><a href="{{ link.href }}" name="linkrow_{{ loop.index0 }}">{{ link.href }}</a></td>
               <td>{{ link.note }}</td>
             </tr>
           {% endfor %}
@@ -126,34 +110,6 @@ p {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='js/jquery.min.js') }}"><\/script>')</script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-
-    <!-- 
-    ajax testing: http://flask.pocoo.org/docs/0.10/patterns/jquery/
-    -->
-    <script type=text/javascript>
-      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    </script>
-    <script type=text/javascript>
-      $(function() {
-        $('a#calculate').bind('click', function() {
-          $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
-            a: $('input[name="a"]').val(),
-            b: $('input[name="b"]').val()
-          }, function(data) {
-            $("#result").text(data.result);
-          });
-          return false;
-        });
-      });
-    </script>
-    <h1>jQuery Example</h1>
-    <p><input type=text size=5 name=a> +
-       <input type=text size=5 name=b> =
-       <span id=result>?</span>
-    <p><a href=# id=calculate>calculate server side</a>
-
-
 
   </body>
 </html>
