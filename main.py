@@ -15,20 +15,17 @@ from flask import Flask, request, render_template
 # set with: 
 # confirm with: heroku config:get DATABASE_URL --app linklistic
 
-#conn = psycopg2.connect(
-#    database=url.path[1:],
-#    user=url.username,
-#    password=url.password,
-#    host=url.hostname,
-#    port=url.port
-#)
+# install RabbitMq (binary, apt-get) and Celery (pip) to set up asynchronous background jobs (getting title, getting thumbnail maybe)
+# RABBITMQ_BIGWIG_TX_URL etc. were set automatically by the heroku addon install process.
 
+# heroku domains:add www.linklistic.com -a linklistic  (won't point to www.* if not explicitly added)
 
 default_params = {'by': None,
                   'message': None,
                   'title': None,
                   'title_size': 'big',
-                  'brand_message': "Turn many links into one link right from your address bar."}
+                  'brand_message': '' #"Turn many links into one link right from your address bar."
+                  }
 
 app = Flask(__name__)
 
@@ -39,18 +36,26 @@ class Link:
             if '://' not in path[:10]:
                 path = 'http://%s' % path
             return path
-        self.href = assume_protocol(path)
 
-        if title: 
+        self.href = assume_protocol(path)
+        self.note = note
+        if title:
             self.title = title
         else:
-            self.title = 'no title'
-        if not note:
-            self.note = 'no note'
+            self.title = path
 
     def write(connection):
         pass
 
+
+
+from celery import Celery
+import os
+celery_app = Celery('tasks', broker='amqp://guest@localhost//')
+celery_app.conf.update(BROKER_URL = "amqp://0lVWqEiZ:iN64VNG3QZm6lOHLlI7OJpCgDPwaFXbM@black-hazel-49.bigwig.lshift.net:10854/CvkUc-lrHImb")
+@celery_app.task
+def add(x, y):
+    return x + y
 
 
 # Consider:
@@ -74,6 +79,7 @@ import urlparse
 urlparse.uses_netloc.append("postgres")
 url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
+from psycopg2.extras import DictCursor
 conn = psycopg2.connect(
     database=url.path[1:],
     user=url.username,
@@ -82,23 +88,47 @@ conn = psycopg2.connect(
     port=url.port)
 
 
+
+@app.route('/')
+def site_root():
+    return "Front page here"
+
+
+@app.route('/adder')
+def adder():
+    from tasks import adder_func
+    return adder_func(3, 4)
+
+
 @app.route('/database')
 def database():
-    SQL1 = "SELECT * FROM Link"
+
+    # SQL_lists = etc. (get title/message/note/etc. information)
+    params = default_params.copy() # placeholder values
+    submitted_text = '' #placeholder
+
+    SQL_links = "SELECT * FROM Link"
     with conn:
-        with conn.cursor() as cursor:
-            cursor.execute(SQL1)
-            records = [r for r in cursor]
+        with conn.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute(SQL_links)
+            links = [Link(path=r[1], title=r[2], note=r[3])
+                            for r in cursor]
+
+    for link in links:
+        print(link.href, link.note)
+
+    return render_template('main.html', links=links, 
+                                        by=params['by'],
+                                        message=params['message'],
+                                        title=params['title'],
+                                        brand_message = params['brand_message'],
+                                        full_query = submitted_text)
     return str(records)
 
 # "Catch-all URL": http://flask.pocoo.org/snippets/57/
-@app.route('/', defaults={'submitted_text': ''})
 @app.route('/<path:submitted_text>')
 def catch_all(submitted_text):
     # '/static/' urls are sent to file system by default
-
-    if submitted_text.lower() in ['', 'index.html', 'index.htm']:
-        return "Front page here"
 
     if submitted_text.lower() in ['about', 'about/', 'about.html']:
         return "About page here"
@@ -132,8 +162,8 @@ def catch_all(submitted_text):
         if len(title) > 77:
             title = title[:77] + '...'
 
-        lnk = Link(path=s, title=title)
-        links.append(lnk)
+        link = Link(path=s, title=title)
+        links.append(link)
 
     # send Link list to jinja template
 
